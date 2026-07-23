@@ -1,6 +1,6 @@
 # Blueprint CDS — diamonds stress fixtures
 
-Shared shape images (`shape-*.png`) plus three fixture sizes for connected-data-source ingest.
+Shared shape images (`shape-*.png`) plus fixture sizes for connected-data-source ingest.
 
 ## Ingest URLs
 
@@ -9,8 +9,9 @@ Shared shape images (`shape-*.png`) plus three fixture sizes for connected-data-
 | `5000.json` | 5,000 | https://raw.githubusercontent.com/JonPurvis/diamonds/main/5000.json |
 | `50000.json` | 50,000 | https://raw.githubusercontent.com/JonPurvis/diamonds/main/50000.json |
 | `500000.json` | 500,000 | https://media.githubusercontent.com/media/JonPurvis/diamonds/main/500000.json |
+| `1000000.json` | 1,000,000 | https://media.githubusercontent.com/media/JonPurvis/diamonds/main/1000000.json |
 
-`500000.json` is stored with Git LFS — use the **media** URL above. `raw.githubusercontent.com` only returns an LFS pointer for that file.
+`500000.json` and `1000000.json` are stored with Git LFS — use the **media** URLs above. `raw.githubusercontent.com` only returns an LFS pointer for those files.
 
 ## Schema
 
