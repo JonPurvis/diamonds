@@ -7,7 +7,7 @@
 
 Use the **LFS media** URL (`raw.githubusercontent.com` only returns a pointer file):
 
-https://media.githubusercontent.com/media/JonPurvis/diamonds/m/diamonds-stress-500k.json
+https://media.githubusercontent.com/media/JonPurvis/diamonds/main/diamonds-stress-500k.json
 
 ## Schema
 
