@@ -1,1 +1,6 @@
-Shape index: 0=Round 1=Princess 2=Cushion 3=Oval 4=Emerald 5=Pear 6=Marquise 7=Radiant 8=Asscher 9=Heart
+Blueprint CDS stress fixture: 500,000 diamonds.
+
+- `diamonds-stress-500k.json` — top-level array
+- `shape-*.png` — images referenced by each row
+- Filters: carat, shape, colour, clarity, cut
+- Price: linear carat map £100 (0.30ct) → £5000 (30.29ct)
