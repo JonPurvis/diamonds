@@ -1,33 +1,23 @@
 # Blueprint CDS — diamonds stress fixtures
 
-Shared shape images (`shape-*.png`) plus fixture sizes for connected-data-source ingest.
+JSON option feeds for connected-data-source ingest stress tests.
+
+| File | Rows | Notes |
+|------|------|--------|
+| `5000.json` | 5,000 | Small / quick |
+| `50000.json` | 50,000 | Medium |
+| `500000.json` | 500,000 | Large (Git LFS) |
+| `1000000.json` | 1,000,000 | Large (Git LFS) |
+| `5000000.json` | 5,000,000 | Large (Git LFS); **5M unique** `(shape, colour, clarity, cut, carat)` tuples; SKUs unique |
+
+Schema (every row): `sku`, `title`, `carat`, `shape`, `colour`, `clarity`, `cut`, `price`, `image`.
+
+Filter cardinalities on the 5M file stay bounded (~10 / 8 / 8 / 4 / ~2k) so raw-value rebuild and filter seeding stay realistic. Repeated carat strings across options are expected — `connected_option_attribute_raw_values` stores one row per distinct value with `occurrence_count`.
 
 ## Ingest URLs
 
-| File | Options | URL |
-|------|--------:|-----|
-| `5000.json` | 5,000 | https://raw.githubusercontent.com/JonPurvis/diamonds/main/5000.json |
-| `50000.json` | 50,000 | https://raw.githubusercontent.com/JonPurvis/diamonds/main/50000.json |
-| `500000.json` | 500,000 | https://media.githubusercontent.com/media/JonPurvis/diamonds/main/500000.json |
-| `1000000.json` | 1,000,000 | https://media.githubusercontent.com/media/JonPurvis/diamonds/main/1000000.json |
-| `5000000.json` | 5,000,000 | https://media.githubusercontent.com/media/JonPurvis/diamonds/main/5000000.json |
-
-`500000.json`, `1000000.json`, and `5000000.json` are stored with Git LFS — use the **media** URLs above. `raw.githubusercontent.com` only returns an LFS pointer for those files.
-
-## Schema
-
-Top-level JSON array. Each row:
-
-`sku`, `title`, `carat`, `shape`, `colour`, `clarity`, `cut`, `price`, `image`
-
-## Filters
-
-- **carat** — `0.30` … `30.29` (0.01 steps, cycling)
-- **shape** — Round, Princess, Cushion, Oval, Emerald, Pear, Marquise, Radiant, Asscher, Heart
-- **colour** — D … K
-- **clarity** — FL, IF, VVS1, VVS2, VS1, VS2, SI1, SI2
-- **cut** — Good, Very Good, Excellent, Cupid's Ideal
-
-## Price
-
-Linear carat map: **0.30ct = £100** → **30.29ct = £5000**.
+- 5k: https://raw.githubusercontent.com/JonPurvis/diamonds/main/5000.json
+- 50k: https://raw.githubusercontent.com/JonPurvis/diamonds/main/50000.json
+- 500k: https://media.githubusercontent.com/media/JonPurvis/diamonds/main/500000.json
+- 1M: https://media.githubusercontent.com/media/JonPurvis/diamonds/main/1000000.json
+- 5M: https://media.githubusercontent.com/media/JonPurvis/diamonds/main/5000000.json
