@@ -8,11 +8,23 @@ JSON option feeds for connected-data-source ingest stress tests.
 | `50000.json` | 50,000 | Medium |
 | `500000.json` | 500,000 | Large (Git LFS) |
 | `1000000.json` | 1,000,000 | Large (Git LFS) |
-| `5000000.json` | 5,000,000 | Large (Git LFS); **5M unique** `(shape, colour, clarity, cut, carat)` tuples; SKUs unique |
+| `5000000.json` | 5,000,000 | Large (Git LFS); SKUs unique |
 
 Schema (every row): `sku`, `title`, `carat`, `shape`, `colour`, `clarity`, `cut`, `price`, `image`.
 
-Filter cardinalities on the 5M file stay bounded (~10 / 8 / 8 / 4 / ~2k) so raw-value rebuild and filter seeding stay realistic. Repeated carat strings across options are expected — `connected_option_attribute_raw_values` stores one row per distinct value with `occurrence_count`.
+**Carat ladder:** `"0.3"` … `"30.0"` in **0.1** steps → **298** distinct values (not 0.01 / ~3000). Other facets stay low-cardinality (~10 / 8 / 8 / 4). Attribute tuples may repeat across rows; `connected_option_attribute_raw_values` stores one row per distinct value with `occurrence_count`.
+
+## Regenerate
+
+```bash
+node scripts/generate.mjs --count 5000 --out 5000.json
+node scripts/generate.mjs --count 50000 --out 50000.json
+node scripts/generate.mjs --count 500000 --out 500000.json
+node scripts/generate.mjs --count 1000000 --out 1000000.json
+node scripts/generate.mjs --count 5000000 --out 5000000.json
+```
+
+Large files use Git LFS (see `.gitattributes`).
 
 ## Ingest URLs
 
