@@ -10,9 +10,33 @@ JSON option feeds for connected-data-source ingest stress tests.
 | `1000000.json` | 1,000,000 | Large (Git LFS) |
 | `5000000.json` | 5,000,000 | Large (Git LFS); SKUs unique |
 
-Schema (every row): `sku`, `title`, `carat`, `shape`, `colour`, `clarity`, `cut`, `price`, `image`.
+Schema (every row): `sku`, `title`, `carat`, `shape`, `colour`, `clarity`, `cut`, `price`, `image`, `polish`, `symmetry`, `fluorescence`, `lab`, `certificate_number`, `measurements`, `table_percent`, `depth_percent`, `girdle`, `culet`.
 
-**Carat ladder:** `"0.3"` … `"30.0"` in **0.1** steps → **298** distinct values (not 0.01 / ~3000). Other facets stay low-cardinality (~10 / 8 / 8 / 4). Attribute tuples may repeat across rows; `connected_option_attribute_raw_values` stores one row per distinct value with `occurrence_count`.
+**Carat ladder:** `"0.3"` … `"30.0"` in **0.1** steps → **298** distinct values (not 0.01 / ~3000).
+
+**Measurements ladder:** `"4.0"` … `"12.0"` in **0.1** steps → **81** distinct values per axis. Formatted as `"L x W x D"` in mm.
+
+**Attribute cardinality (filter facets):**
+
+| Attribute | Distinct values |
+|-----------|-----------------|
+| `carat` | 298 |
+| `shape` | 10 |
+| `colour` | 8 |
+| `clarity` | 8 |
+| `cut` | 4 |
+| `polish` | 4 |
+| `symmetry` | 4 |
+| `fluorescence` | 5 |
+| `lab` | 5 |
+| `table_percent` | 21 (52.0–62.0) |
+| `depth_percent` | 21 (58.0–63.0) |
+| `girdle` | 7 |
+| `culet` | 4 |
+| `measurements` | ~81 per axis |
+| `certificate_number` | unique per row |
+
+Attribute tuples may repeat across rows; `connected_option_attribute_raw_values` stores one row per distinct value with `occurrence_count`.
 
 ## Regenerate
 
