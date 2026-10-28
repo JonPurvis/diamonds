@@ -61,7 +61,7 @@ For Blueprint admin **option values CSV upload** on a sandwich veg-toppings ques
 | `active` | `1` / `0` |
 | `tag_orders` | `0` for this fixture |
 | `additional_price` | `0` |
-| `image_url` | Public HTTPS image (Picsum); staged into Shopify Files on import |
+| `image_url` | 1000×1000 labelled placeholder (`placehold.co`, text = option name); staged into Shopify Files on import |
 
 **300 rows** (`sandwich-salad-vegetables.txt` → CSV). Blueprint default **`max_per_option` is 100** — raise `BLUEPRINT_VALUES_MAX_PER_OPTION` or import in batches if you already have values on the question.
 

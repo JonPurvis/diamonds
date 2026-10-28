@@ -34,10 +34,31 @@ function slugForSeed(name) {
     .replace(/^-+|-+$/g, '');
 }
 
-/** @param {string} name */
+/** @param {string} slug */
+function hueFromSlug(slug) {
+  let hash = 0;
+
+  for (let i = 0; i < slug.length; i += 1) {
+    hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
+  }
+
+  const hue = hash % 360;
+
+  return hue;
+}
+
+/**
+ * Picsum "seeds" only pick a fixed stock photo — the slug does not affect subject matter.
+ * Labelled 1000×1000 placeholders keep each URL unique and show the option name in QA.
+ *
+ * @param {string} name */
 function imageUrl(name) {
   const slug = slugForSeed(name);
-  return `https://picsum.photos/seed/sandwich-salad-${slug}/1000/1000.jpg`;
+  const hue = hueFromSlug(slug);
+  const bg = `hsl(${hue}%2045%25%2032%25)`;
+  const text = encodeURIComponent(name);
+
+  return `https://placehold.co/1000x1000/${bg}/ffffff/png?text=${text}`;
 }
 
 function loadNames() {
