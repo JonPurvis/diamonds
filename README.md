@@ -61,11 +61,24 @@ For Blueprint admin **option values CSV upload** on a sandwich veg-toppings ques
 | `active` | `1` / `0` |
 | `tag_orders` | `0` for this fixture |
 | `additional_price` | `0` |
-| `image_url` | 1000×1000 labelled placeholder (`placehold.co`, text = option name); staged into Shopify Files on import |
+| `image_url` | 1000×1000 labelled placeholder (`placehold.co`) until mirrored to Shopify CDN; then `cdn.shopify.com` (see below) |
 
 **300 rows** (`sandwich-salad-vegetables.txt` → CSV). Blueprint default **`max_per_option` is 100** — raise `BLUEPRINT_VALUES_MAX_PER_OPTION` or import in batches if you already have values on the question.
 
-Regenerate:
+### Mirror images to Shopify CDN (optional)
+
+Placehold URLs work for import but do not populate `images.media_image_gid`. From the Blueprint app repo (with a working shop DB and API):
+
+```bash
+php artisan blueprint:mirror-csv-option-images-to-cdn \
+  --shop=YOUR-STORE.myshopify.com \
+  --input=/path/to/diamonds/sandwich-salad-options.csv \
+  --cdn-manifest=/path/to/diamonds/sandwich-salad-cdn-urls.json
+```
+
+That uploads each external `image_url` via Shopify `fileCreate`, rewrites the CSV with `cdn.shopify.com` links, and writes `sandwich-salad-cdn-urls.json`. Re-run `node scripts/generate-sandwich-salad-options.mjs` to rebuild the CSV from the manifest without losing CDN URLs.
+
+Regenerate placeholders only:
 
 ```bash
 node scripts/generate-sandwich-salad-options.mjs

@@ -13,6 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const OUT = resolve(ROOT, 'sandwich-salad-options.csv');
 const NAMES_FILE = resolve(ROOT, 'sandwich-salad-vegetables.txt');
+const CDN_MANIFEST = resolve(ROOT, 'sandwich-salad-cdn-urls.json');
 const TARGET_ROWS = 300;
 
 /** @param {string} value */
@@ -75,12 +76,27 @@ function bgHexFromSlug(slug) {
   return hslToHex(hue, sat, light);
 }
 
+function loadCdnUrlsByValue() {
+  try {
+    const parsed = JSON.parse(readFileSync(CDN_MANIFEST, 'utf8'));
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 /**
- * Picsum "seeds" only pick a fixed stock photo — the slug does not affect subject matter.
- * Labelled 1000×1000 placeholders keep each URL unique and show the option name in QA.
+ * Labelled placehold.co URL until mirrored to Shopify CDN (see blueprint:mirror-csv-option-images-to-cdn).
  *
- * @param {string} name */
-function imageUrl(name) {
+ * @param {string} name
+ * @param {Record<string, string>} cdnByValue
+ */
+function imageUrl(name, cdnByValue) {
+  const cdn = cdnByValue[name];
+  if (typeof cdn === 'string' && cdn.includes('cdn.shopify.com') === true) {
+    return cdn;
+  }
+
   const slug = slugForSeed(name);
   const bg = bgHexFromSlug(slug);
   const text = encodeURIComponent(name);
@@ -120,6 +136,7 @@ function loadNames() {
 
 function main() {
   const names = loadNames();
+  const cdnByValue = loadCdnUrlsByValue();
   const lines = ['value,active,tag_orders,additional_price,image_url'];
 
   for (const name of names) {
@@ -128,7 +145,7 @@ function main() {
       '1',
       '0',
       '0',
-      csvEscape(imageUrl(name)),
+      csvEscape(imageUrl(name, cdnByValue)),
     ].join(','));
   }
 
