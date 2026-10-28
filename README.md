@@ -4,6 +4,7 @@ JSON option feeds for connected-data-source ingest stress tests.
 
 | File | Rows | Notes |
 |------|------|--------|
+| `sandwich-salad-options.csv` | 298 | Local option **CSV bulk import** (images via public HTTPS URLs) |
 | `5000.json` | 5,000 | Small / quick |
 | `50000.json` | 50,000 | Medium |
 | `500000.json` | 500,000 | Large (Git LFS) |
@@ -49,6 +50,28 @@ node scripts/generate.mjs --count 5000000 --out 5000000.json
 ```
 
 Large files use Git LFS (see `.gitattributes`).
+
+## Option values CSV (`sandwich-salad-options.csv`)
+
+For Blueprint admin **option values CSV upload** on a sandwich/salad template (local uploaded images stress test).
+
+| Column | Notes |
+|--------|--------|
+| `value` | Display name |
+| `active` | `1` / `0` |
+| `tag_orders` | `0` for this fixture |
+| `additional_price` | `0` |
+| `image_url` | Public HTTPS image (Picsum); staged into Shopify Files on import |
+
+**298 rows** (8 seed salad toppings + generated sandwich/salad names). Blueprint default **`max_per_option` is 100** — raise `BLUEPRINT_VALUES_MAX_PER_OPTION` or import in batches if you already have values on the question.
+
+Regenerate:
+
+```bash
+node scripts/generate-sandwich-salad-options.mjs
+```
+
+Raw URL: https://raw.githubusercontent.com/JonPurvis/diamonds/main/sandwich-salad-options.csv
 
 ## Ingest URLs
 

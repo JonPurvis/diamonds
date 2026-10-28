@@ -1,3 +1,0 @@
-500000.json filter=lfs diff=lfs merge=lfs -text
-1000000.json filter=lfs diff=lfs merge=lfs -text
-5000000.json filter=lfs diff=lfs merge=lfs -text
