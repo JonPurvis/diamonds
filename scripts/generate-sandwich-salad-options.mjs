@@ -37,7 +37,7 @@ function slugForSeed(name) {
 /** @param {string} name */
 function imageUrl(name) {
   const slug = slugForSeed(name);
-  return `https://picsum.photos/seed/sandwich-salad-${slug}/128/128.jpg`;
+  return `https://picsum.photos/seed/sandwich-salad-${slug}/1000/1000.jpg`;
 }
 
 function loadNames() {
