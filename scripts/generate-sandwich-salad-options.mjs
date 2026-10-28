@@ -35,16 +35,44 @@ function slugForSeed(name) {
 }
 
 /** @param {string} slug */
-function hueFromSlug(slug) {
+function hashSlug(slug) {
   let hash = 0;
 
   for (let i = 0; i < slug.length; i += 1) {
     hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
   }
 
-  const hue = hash % 360;
+  return hash;
+}
 
-  return hue;
+/**
+ * @param {number} h 0–360
+ * @param {number} s 0–100
+ * @param {number} l 0–100
+ */
+function hslToHex(h, s, l) {
+  const sat = s / 100;
+  const light = l / 100;
+  const chroma = sat * Math.min(light, 1 - light);
+
+  const channel = (n) => {
+    const k = (n + h / 30) % 12;
+    const raw = light - chroma * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+
+    return Math.round(255 * raw).toString(16).padStart(2, '0');
+  };
+
+  return `${channel(0)}${channel(8)}${channel(4)}`;
+}
+
+/** Dark, readable backgrounds — hue/sat/light all derived from the slug. */
+function bgHexFromSlug(slug) {
+  const hash = hashSlug(slug);
+  const hue = Math.floor((hash * 137.508) % 360);
+  const sat = 52 + ((hash >> 8) % 38);
+  const light = 30 + ((hash >> 16) % 22);
+
+  return hslToHex(hue, sat, light);
 }
 
 /**
@@ -54,8 +82,7 @@ function hueFromSlug(slug) {
  * @param {string} name */
 function imageUrl(name) {
   const slug = slugForSeed(name);
-  const hue = hueFromSlug(slug);
-  const bg = `hsl(${hue}%2045%25%2032%25)`;
+  const bg = bgHexFromSlug(slug);
   const text = encodeURIComponent(name);
 
   return `https://placehold.co/1000x1000/${bg}/ffffff/png?text=${text}`;
