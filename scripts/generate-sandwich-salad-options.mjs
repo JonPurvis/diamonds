@@ -1,70 +1,19 @@
 #!/usr/bin/env node
 /**
- * Blueprint option-values CSV for local image stress tests (bulk CSV import).
+ * Blueprint option-values CSV — ~300 sandwich veg toppings (bulk CSV import).
  *
- * Usage: node scripts/generate-sandwich-salad-options.mjs
+ * Edit ../sandwich-salad-vegetables.txt (one name per line), then:
+ *   node scripts/generate-sandwich-salad-options.mjs
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT = resolve(__dirname, '..', 'sandwich-salad-options.csv');
-const TARGET_ROWS = 298;
-
-const SEED_NAMES = [
-  'Lettuce',
-  'Tomatoes',
-  'Cucumber',
-  'Red Onion',
-  'Green Peppers',
-  'Sweetcorn',
-  'Olives',
-  'Carrots',
-];
-
-const GREENS = [
-  'Romaine', 'Iceberg', 'Spinach', 'Kale', 'Arugula', 'Mixed Greens', 'Radicchio',
-  'Frisée', 'Butter Lettuce', 'Little Gem', 'Watercress', 'Endive', 'Chard', 'Bok Choy',
-];
-
-const VEG = [
-  'Cherry Tomatoes', 'Beefsteak Tomato', 'Sun-Dried Tomatoes', 'Avocado', 'Red Cabbage',
-  'Shredded Cabbage', 'Coleslaw Mix', 'Beetroot', 'Radish', 'Spring Onion', 'Scallions',
-  'White Onion', 'Pickled Onion', 'Caramelised Onion', 'Jalapeños', 'Banana Peppers',
-  'Roasted Peppers', 'Artichoke Hearts', 'Mushrooms', 'Celery', 'Broccoli Florets',
-  'Cauliflower', 'Edamame', 'Peas', 'Green Beans', 'Asparagus Tips', 'Zucchini',
-  'Aubergine', 'Fennel', 'Parsnip', 'Turnip', 'Swede', 'Leeks', 'Garlic Crisps',
-];
-
-const PROTEINS = [
-  'Grilled Chicken', 'Crispy Chicken', 'Turkey Breast', 'Ham', 'Roast Beef', 'Pastrami',
-  'Salami', 'Pepperoni', 'Prosciutto', 'Bacon', 'Smoked Salmon', 'Tuna', 'Egg',
-  'Boiled Egg', 'Falafel', 'Tofu', 'Halloumi', 'Mozzarella', 'Feta', 'Cheddar',
-  'Swiss Cheese', 'Blue Cheese', 'Goat Cheese', 'Parmesan Shavings', 'Black Beans',
-  'Chickpeas', 'Lentils', 'Pulled Pork', 'Meatballs', 'Anchovies',
-];
-
-const CRUNCH = [
-  'Croutons', 'Pita Chips', 'Tortilla Strips', 'Sesame Seeds', 'Sunflower Seeds',
-  'Pumpkin Seeds', 'Almonds', 'Walnuts', 'Pecans', 'Cashews', 'Pine Nuts',
-  'Chow Mein Noodles', 'Wonton Strips', 'Pretzel Crunch', 'Granola', 'Corn Nuts',
-];
-
-const DRESSINGS = [
-  'Ranch Drizzle', 'Caesar Dressing', 'Balsamic Glaze', 'Italian Dressing',
-  'Honey Mustard', 'Blue Cheese Dressing', 'Thousand Island', 'French Dressing',
-  'Lemon Vinaigrette', 'Red Wine Vinaigrette', 'Tahini Dressing', 'Yogurt Ranch',
-  'Sriracha Mayo', 'Chipotle Mayo', 'Garlic Aioli', 'Pesto Drizzle',
-];
-
-const EXTRAS = [
-  'Capers', 'Pickles', 'Gherkins', 'Kimchi', 'Sauerkraut', 'Hummus', 'Guacamole',
-  'Salsa', 'Pico de Gallo', 'Chutney', 'Apple Slices', 'Dried Cranberries',
-  'Raisins', 'Fresh Herbs', 'Basil', 'Cilantro', 'Dill', 'Mint', 'Chives',
-  'Parsley', 'Microgreens', 'Sprouts', 'Quinoa', 'Couscous', 'Wild Rice',
-  'Orzo', 'Pasta Salad', 'Macaroni', 'Potato Salad', 'Beet Slaw', 'Apple Slaw',
-];
+const ROOT = resolve(__dirname, '..');
+const OUT = resolve(ROOT, 'sandwich-salad-options.csv');
+const NAMES_FILE = resolve(ROOT, 'sandwich-salad-vegetables.txt');
+const TARGET_ROWS = 300;
 
 /** @param {string} value */
 function csvEscape(value) {
@@ -91,44 +40,38 @@ function imageUrl(name) {
   return `https://picsum.photos/seed/sandwich-salad-${slug}/128/128.jpg`;
 }
 
-function buildUniqueNames() {
+function loadNames() {
+  const raw = readFileSync(NAMES_FILE, 'utf8');
+  const names = raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
   /** @type {string[]} */
-  const names = [...SEED_NAMES];
+  const unique = [];
   /** @type {Set<string>} */
-  const seen = new Set(names.map((n) => n.toLowerCase()));
+  const seen = new Set();
 
-  const pools = [GREENS, VEG, PROTEINS, CRUNCH, DRESSINGS, EXTRAS];
+  for (const name of names) {
+    const key = name.toLowerCase();
 
-  for (const pool of pools) {
-    for (const name of pool) {
-      if (names.length >= TARGET_ROWS) {
-        break;
-      }
-
-      const key = name.toLowerCase();
-
-      if (seen.has(key) === true) {
-        continue;
-      }
-
-      seen.add(key);
-      names.push(name);
+    if (seen.has(key) === true) {
+      continue;
     }
+
+    seen.add(key);
+    unique.push(name);
   }
 
-  let suffix = 2;
-
-  while (names.length < TARGET_ROWS) {
-    const synthetic = `House Topping ${suffix}`;
-    suffix += 1;
-    names.push(synthetic);
+  if (unique.length !== TARGET_ROWS) {
+    throw new Error(`Expected ${TARGET_ROWS} unique lines in sandwich-salad-vegetables.txt, got ${unique.length}.`);
   }
 
-  return names.slice(0, TARGET_ROWS);
+  return unique;
 }
 
 function main() {
-  const names = buildUniqueNames();
+  const names = loadNames();
   const lines = ['value,active,tag_orders,additional_price,image_url'];
 
   for (const name of names) {
